@@ -39,4 +39,28 @@ NAindex <- apply(testingRaw,2,function(x) {sum(is.na(x))})
 training <- trainingRaw[,which(NAindex == 0)]
 ```
 Based on the [class discussion](https://www.coursera.org/learn/practical-machine-learning/discussions/weeks/4/threads/1gqWVBxTEea3JA6-1_N9Kw/replies/CPHPZCYhEeaDFg6CjeDgQw), it is assumed that there is enough data that is non-missing in both datasets. Therefore using the method in [source](http://stackoverflow.com/a/15968711), we removed the columns that are "NA" in test data, also in the training data.  
+Let's also take out the index column, the first column in both data sets.
+```{r subset, echo=TRUE}
+training <- training[,2:60]
+testing <- testing[,2:60]
+```
+## Training 
+
+### Getting the Training Set Ready
+Let's separate the training data into training and test sets to work on our model fit.  
+```{r model, echo=TRUE, message=FALSE}
+library(caret)
+library(rattle)
+set.seed(1234)
+inTrain = createDataPartition(training$classe, p=0.7, list=FALSE)
+train1 = training[ inTrain,]
+test1 = training[-inTrain,]
+```
+
+### Training with Decision Tree
+We will first try the decision trees to fit our data.
+```{r tree, echo=TRUE, message=FALSE, fig.height=4, fig.width=6}
+modTree <- train(classe ~., method="rpart", data=train1)
+fancyRpartPlot(modTree$finalModel)
+```
 
