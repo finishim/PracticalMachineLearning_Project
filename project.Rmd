@@ -44,9 +44,9 @@ Let's also take out the index column, the first column in both data sets.
 training <- training[,2:60]
 testing <- testing[,2:60]
 ```
-## Training 
+## Training the Data  
 
-### Getting the Training Set Ready
+### Getting the Training Set Ready  
 Let's separate the training data into training and test sets to work on our model fit.  
 ```{r model, echo=TRUE, message=FALSE}
 library(caret)
@@ -57,10 +57,28 @@ train1 = training[ inTrain,]
 test1 = training[-inTrain,]
 ```
 
-### Training with Decision Tree
-We will first try the decision trees to fit our data.
+### Training with Decision Tree  
+We will first try the decision trees to fit our data. We will preprocess to impute uncollected data, center and scale.  
 ```{r tree, echo=TRUE, message=FALSE, fig.height=4, fig.width=6}
-modTree <- train(classe ~., method="rpart", data=train1)
+modTree <- train(classe ~., method="rpart", preProcess=c("knnImpute","center", "scale"), data=train1, allowParallel=TRUE)
 fancyRpartPlot(modTree$finalModel)
 ```
+Let's check the accuracy of this method:  
+```{r treeAccuracy, echo=TRUE}
+predTree <- predict(modTree, test1)
+confusionMatrix(predTree, test1$classe)
+```
+The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.  
 
+### Training with Random Forest  
+Let's train our data with Random Forest method.  
+```{r rForest, echo=TRUE}
+modRF <- train(classe ~.,method="rf", preProcess=c("knnImpute","center", "scale"), data=train1, allowParallel=TRUE)
+modRF$finalModel
+```
+Let's check the accuracy of this method:  
+```{r rfAccuracy, echo=TRUE}
+predRF <- predict(moRF, test1)
+confusionMatrix(predRF, test1$classe)
+```
+The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.
