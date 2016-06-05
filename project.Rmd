@@ -20,11 +20,23 @@ The data for this project come from [this source](http://groupware.les.inf.puc-r
 url_train <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 url_test <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
 
-download.file(url=url_train, ".\\data\\training.csv")
-download.file(url=url_test, ".\\data\\testing.csv")
+if(!file.exists('.\\data\\training.csv')){
+    download.file(url=url_train, ".\\data\\training.csv")
+    download.file(url=url_test, ".\\data\\testing.csv")
+}
 
-training <- read.csv("training.csv", header=TRUE, stringsAsFactors = FALSE, sep = ",", na.strings = c("", "NA", "#DIV/0!"))
-testing <- read.csv("testing.csv", header=TRUE, stringsAsFactors = FALSE,sep = ",", na.strings = c("", "NA", "#DIV/0!"))
+trainingRaw <- read.csv(".\\data\\training.csv", header=TRUE, sep = ",", na.strings = c("", "NA", "#DIV/0!"))
+testingRaw <- read.csv(".\\data\\testing.csv", header=TRUE, sep = ",", na.strings = c("", "NA", "#DIV/0!"))
 ```
 
-## Cleaning the Data
+## Cleaning the Data  
+
+Now, let's clean the dataset a little bit. Let's remove all the columns where the only values are "NA".  
+```{r NAremove, echo=TRUE}
+testing <- testingRaw[ , ! apply( testingRaw , 2 , function(x) all(is.na(x)) ) ]
+dim(testingRaw)-dim(testing)
+NAindex <- apply(testingRaw,2,function(x) {sum(is.na(x))}) 
+training <- trainingRaw[,which(NAindex == 0)]
+```
+Based on the [class discussion](https://www.coursera.org/learn/practical-machine-learning/discussions/weeks/4/threads/1gqWVBxTEea3JA6-1_N9Kw/replies/CPHPZCYhEeaDFg6CjeDgQw), it is assumed that there is enough data that is non-missing in both datasets. Therefore using the method in [source](http://stackoverflow.com/a/15968711), we removed the columns that are "NA" in test data, also in the training data.  
+

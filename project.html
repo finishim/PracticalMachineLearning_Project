@@ -129,6 +129,26 @@ $(document).ready(function () {
 <div id="loading-the-data" class="section level2">
 <h2>Loading the Data</h2>
 <p>The data for this project come from <a href="http://groupware.les.inf.puc-rio.br/har">this source</a>.</p>
+<pre class="r"><code>url_train &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
+url_test &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;
+
+if(!file.exists('.\\data\\training.csv')){
+    download.file(url=url_train, &quot;.\\data\\training.csv&quot;)
+    download.file(url=url_test, &quot;.\\data\\testing.csv&quot;)
+}
+
+trainingRaw &lt;- read.csv(&quot;.\\data\\training.csv&quot;, header=TRUE, sep = &quot;,&quot;, na.strings = c(&quot;&quot;, &quot;NA&quot;, &quot;#DIV/0!&quot;))
+testingRaw &lt;- read.csv(&quot;.\\data\\testing.csv&quot;, header=TRUE, sep = &quot;,&quot;, na.strings = c(&quot;&quot;, &quot;NA&quot;, &quot;#DIV/0!&quot;))</code></pre>
+</div>
+<div id="cleaning-the-data" class="section level2">
+<h2>Cleaning the Data</h2>
+<p>Now, let’s clean the dataset a little bit. Let’s remove all the columns where the only values are “NA”.</p>
+<pre class="r"><code>testing &lt;- testingRaw[ , ! apply( testingRaw , 2 , function(x) all(is.na(x)) ) ]
+dim(testingRaw)-dim(testing)</code></pre>
+<pre><code>## [1]   0 100</code></pre>
+<pre class="r"><code>NAindex &lt;- apply(testingRaw,2,function(x) {sum(is.na(x))}) 
+training &lt;- trainingRaw[,which(NAindex == 0)]</code></pre>
+<p>Based on the <a href="https://www.coursera.org/learn/practical-machine-learning/discussions/weeks/4/threads/1gqWVBxTEea3JA6-1_N9Kw/replies/CPHPZCYhEeaDFg6CjeDgQw">class discussion</a>, it is assumed that there is enough data that is non-missing in both datasets. Therefore using the method in <a href="http://stackoverflow.com/a/15968711">source</a>, we removed the columns that are “NA” in test data, also in the training data.</p>
 </div>
 
 
