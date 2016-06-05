@@ -16,4 +16,15 @@ Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible t
 ## Loading the Data  
 
 The data for this project come from [this source](http://groupware.les.inf.puc-rio.br/har).  
+```{r load, echo=TRUE}
+url_train <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+url_test <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
 
+download.file(url=url_train, ".\\data\\training.csv")
+download.file(url=url_test, ".\\data\\testing.csv")
+
+training <- read.csv("training.csv", header=TRUE, stringsAsFactors = FALSE, sep = ",", na.strings = c("", "NA", "#DIV/0!"))
+testing <- read.csv("testing.csv", header=TRUE, stringsAsFactors = FALSE,sep = ",", na.strings = c("", "NA", "#DIV/0!"))
+```
+
+## Cleaning the Data
