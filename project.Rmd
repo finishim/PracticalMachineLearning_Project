@@ -60,6 +60,7 @@ test1 = training[-inTrain,]
 ### Training with Decision Tree  
 We will first try the decision trees to fit our data.  
 ```{r tree, echo=TRUE, cache=TRUE, message=FALSE, fig.height=4, fig.width=6}
+set.seed(1234)
 modTree <- train(classe ~., method="rpart", data=train1)
 fancyRpartPlot(modTree$finalModel)
 ```
@@ -69,7 +70,7 @@ set.seed(1234)
 predTree <- predict(modTree, test1)
 confusionMatrix(predTree, test1$classe)
 ```
-The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.  
+The accuracy seems to be pretty low near %49. We should try another algorithm to train our data with.  
 
 ### Training with Random Forest  
 Let's train our data with Random Forest method.     
@@ -84,13 +85,13 @@ set.seed(1234)
 predRF <- predict(modRF, test1)
 confusionMatrix(predRF, test1$classe)
 ```
-The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.
+The accuracy seems to be %.  
 
 ### Training with Generalized Boosted Model  
 Let's train our data with Generalized Boosted Model method.  
 ```{r gbm, echo=TRUE, cache=TRUE}
 set.seed(1234)
-modGBM <- train(classe ~.,method="gbm", data=train1)
+modGBM <- train(classe ~.,method="gbm", data=train1, trControl=trainControl(method="cv",number=5))
 modGBM$finalModel
 ```
 Let's check the accuracy of this method:  
@@ -99,12 +100,12 @@ set.seed(1234)
 predGBM <- predict(modGBM, test1)
 confusionMatrix(predGBM, test1$classe)
 ```
-The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.  
+The accuracy seems to be  %.  
 
 ## Conclusion  
 The accuracy of the three regression modeling methods above are:  
 
-Decision Tree : 0.7368  
+Decision Tree : 0.493  
 Random Forest : 0.9963  
 Generalized Boosted Model : 0.9839  
 Based on this result, the Random Forest model will be applied to predict the 20 quiz results (testing dataset).

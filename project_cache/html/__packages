@@ -5,3 +5,6 @@ caret
 rattle
 rpart
 randomForest
+survival
+gbm
+plyr
