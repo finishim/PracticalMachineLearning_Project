@@ -85,13 +85,13 @@ set.seed(1234)
 predRF <- predict(modRF, test1)
 confusionMatrix(predRF, test1$classe)
 ```
-The accuracy seems to be %.  
+The accuracy seems to be %9994.  
 
 ### Training with Generalized Boosted Model  
 Let's train our data with Generalized Boosted Model method.  
 ```{r gbm, echo=TRUE, cache=TRUE}
 set.seed(1234)
-modGBM <- train(classe ~.,method="gbm", data=train1, trControl=trainControl(method="cv",number=5))
+modGBM <- train(classe ~.,method="gbm", data=train1, trControl=trainControl(method="cv",number=5),verbose=FALSE)
 modGBM$finalModel
 ```
 Let's check the accuracy of this method:  
@@ -100,15 +100,15 @@ set.seed(1234)
 predGBM <- predict(modGBM, test1)
 confusionMatrix(predGBM, test1$classe)
 ```
-The accuracy seems to be  %.  
+The accuracy seems to be  %9953.  
 
 ## Conclusion  
 The accuracy of the three regression modeling methods above are:  
 
 Decision Tree : 0.493  
-Random Forest : 0.9963  
-Generalized Boosted Model : 0.9839  
-Based on this result, the Random Forest model will be applied to predict the 20 quiz results (testing dataset).
+Random Forest : 0.9994  
+Generalized Boosted Model : 0.9953  
+Based on this result, the Random Forest model will be applied to predict the 20 quiz results (testing dataset). Cross validation with five folds were used for this model. That seemed to work to produce great accuracy, reducing over-fitting to the training dataset.  
 
 ```{r result, echo=TRUE, cache=TRUE}
 predTest <- predict(modRF, newdata=testing)
