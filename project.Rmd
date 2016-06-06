@@ -52,45 +52,51 @@ Let's separate the training data into training and test sets to work on our mode
 library(caret)
 library(rattle)
 set.seed(1234)
-inTrain = createDataPartition(training$classe, p=0.7, list=FALSE)
+inTrain = createDataPartition(training$classe, p=0.6, list=FALSE)
 train1 = training[ inTrain,]
 test1 = training[-inTrain,]
 ```
 
 ### Training with Decision Tree  
-We will first try the decision trees to fit our data. We will preprocess to impute uncollected data, center and scale.  
+We will first try the decision trees to fit our data.  
 ```{r tree, echo=TRUE, cache=TRUE, message=FALSE, fig.height=4, fig.width=6}
-modTree <- train(classe ~., method="rpart", preProcess=c("knnImpute","center", "scale"), data=train1, allowParallel=TRUE)
+set.seed(1234)
+modTree <- train(classe ~., method="rpart", data=train1, allowParallel=TRUE)
 fancyRpartPlot(modTree$finalModel)
 ```
 Let's check the accuracy of this method:  
 ```{r treeAccuracy, echo=TRUE}
+set.seed(1234)
 predTree <- predict(modTree, test1)
 confusionMatrix(predTree, test1$classe)
 ```
 The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.  
 
 ### Training with Random Forest  
-Let's train our data with Random Forest method. We will preprocess to impute uncollected data, center and scale.   
+Let's train our data with Random Forest method.     
 ```{r rForest, echo=TRUE, cache=TRUE}
-modRF <- train(classe ~.,method="rf", preProcess=c("knnImpute","center", "scale"), data=train1, allowParallel=TRUE)
+set.seed(1234)
+modRF <- train(classe ~.,method="rf", data=train1, trControl=trainControl(method="cv",number=5), ntree=200, prox = TRUE, allowParallel=TRUE)
 modRF$finalModel
 ```
 Let's check the accuracy of this method:  
 ```{r rfAccuracy, echo=TRUE}
+set.seed(1234)
 predRF <- predict(modRF, test1)
 confusionMatrix(predRF, test1$classe)
 ```
 The accuracy seems to be pretty low near %55. We should try another algorithm to train our data with.
 
 ### Training with Generalized Boosted Model  
-Let's train our data with Generalized Boosted Model method. We will preprocess to impute uncollected data, center and scale.   
+Let's train our data with Generalized Boosted Model method.  
 ```{r gbm, echo=TRUE, cache=TRUE}
-modGBM <- train(classe ~.,method="gbm", preProcess=c("knnImpute","center", "scale"), data=train1, allowParallel=TRUE)
+set.seed(1234)
+modGBM <- train(classe ~.,method="gbm", data=train1, allowParallel=TRUE)
 modGBM$finalModel
 ```
 Let's check the accuracy of this method:  
 ```{r gbmAccuracy, echo=TRUE}
+set.seed(1234)
 predGBM <- predict(modGBM, test1)
 confusionMatrix(predGBM, test1$classe)
 ```
